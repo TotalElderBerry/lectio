@@ -1,0 +1,26 @@
+# Nuxt
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+
+# Dependencies
+node_modules
+
+# Environment — never commit real credentials
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs
+
+# Editor / OS
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+Thumbs.db

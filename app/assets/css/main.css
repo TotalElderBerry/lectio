@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/* Theme is driven by a class so it can be chosen explicitly, not only by OS. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --paper: #faf7f1;
+  --paper-raised: #fffdf8;
+  --paper-sunk: #f3eee4;
+  --ink: #2c2724;
+  --ink-soft: #6a615a;
+  --ink-faint: #9d948c;
+  --rule: #e6ded1;
+  --accent: #6d5b7c;
+  --accent-ink: #ffffff;
+  --accent-soft: #efe9f3;
+  --danger: #9a4a3f;
+}
+
+.dark {
+  color-scheme: dark;
+  --paper: #15120f;
+  --paper-raised: #1d1a16;
+  --paper-sunk: #110f0c;
+  --ink: #ece5da;
+  --ink-soft: #a79d91;
+  --ink-faint: #786f64;
+  --rule: #302b24;
+  --accent: #bda7cf;
+  --accent-ink: #1d1a16;
+  --accent-soft: #292235;
+  --danger: #d98b7e;
+}
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "EB Garamond", ui-serif, Georgia, Cambria, serif;
+
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+}
+
+@layer base {
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3 {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Scripture always reads as Scripture: serif, large, unhurried. */
+@utility scripture {
+  font-family: var(--font-serif);
+  font-size: 1.3125rem;
+  line-height: 1.9;
+  letter-spacing: 0.003em;
+}
+
+@utility scripture-sm {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+/* A quiet appearance, used when a step or a passage arrives. */
+@utility rise {
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
