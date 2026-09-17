@@ -18,12 +18,13 @@ async function signOut() {
 </script>
 
 <template>
-  <div class="min-h-dvh flex flex-col bg-paper">
+  <div class="flex min-h-dvh flex-col bg-paper">
+    <!-- Sticky on desktop so the movements stay one click away while writing. -->
     <header
       v-if="loggedIn"
-      class="border-b border-rule/70"
+      class="sticky top-0 z-20 border-b border-rule/70 bg-paper/85 backdrop-blur-sm"
     >
-      <div class="mx-auto flex w-full max-w-3xl items-center gap-6 px-5 py-4">
+      <div class="mx-auto flex w-full max-w-6xl items-center gap-6 px-5 py-4 lg:px-8">
         <NuxtLink
           to="/"
           class="font-serif text-xl tracking-tight text-ink"
@@ -31,7 +32,7 @@ async function signOut() {
           Lectio
         </NuxtLink>
 
-        <nav class="flex items-center gap-5 text-sm">
+        <nav class="flex items-center gap-5 text-sm lg:gap-7">
           <NuxtLink
             v-for="link in links"
             :key="link.to"

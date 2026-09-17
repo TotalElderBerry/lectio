@@ -10,7 +10,11 @@
       "Read(//c/Users/Glophics/AppData/Local/Temp/claude/C--Users-Glophics-AppData-Roaming-Claude-scratch-workspaces-4ae4e0a0-dd46-4a33-a135-bb44f444ad2a-b8fe660d-3341-4bb2-a4c7-642e354251a0-scratch-2026-09-17-aa5138/0409172a-54f6-4d61-92e5-a5b87884dc7a/tasks/**)",
       "Bash(break)",
       "PowerShell(pnpm test 2>&1 | Select-Object -Last 12; Write-Output \"--- exit $LASTEXITCODE ---\")",
-      "PowerShell(Write-Output \"=== TEST ===\"; pnpm test 2>&1 | Select-String -Pattern \"Test Files|Tests \" ; Write-Output \"=== TYPECHECK ===\"; pnpm typecheck 2>&1 | Select-String -Pattern \"error TS\" | Select-Object -First 10; Write-Output \"typecheck exit: $LASTEXITCODE\"; Write-Output \"=== BUILD ===\"; pnpm build 2>&1 | Select-String -Pattern \"Build complete|ERROR|error\"; Write-Output \"build exit: $LASTEXITCODE\")"
+      "PowerShell(Write-Output \"=== TEST ===\"; pnpm test 2>&1 | Select-String -Pattern \"Test Files|Tests \" ; Write-Output \"=== TYPECHECK ===\"; pnpm typecheck 2>&1 | Select-String -Pattern \"error TS\" | Select-Object -First 10; Write-Output \"typecheck exit: $LASTEXITCODE\"; Write-Output \"=== BUILD ===\"; pnpm build 2>&1 | Select-String -Pattern \"Build complete|ERROR|error\"; Write-Output \"build exit: $LASTEXITCODE\")",
+      "Bash(seq 1 90)",
+      "Bash(grep -qiE 'localhost:3000|EADDRINUSE|ERROR' C:/Users/Glophics/AppData/Local/Temp/claude/C--Users-Glophics-Brian-Projects-lectio/0409172a-54f6-4d61-92e5-a5b87884dc7a/tasks/b9fq1rr6n.output)",
+      "Bash(sleep 1)",
+      "Bash(tail -6 C:/Users/Glophics/AppData/Local/Temp/claude/C--Users-Glophics-Brian-Projects-lectio/0409172a-54f6-4d61-92e5-a5b87884dc7a/tasks/b9fq1rr6n.output)"
     ]
   }
 }

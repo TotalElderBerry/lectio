@@ -42,14 +42,14 @@ const streakNote = computed(() => {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-3xl px-5 py-12 sm:py-16">
-    <header class="mb-10">
-      <h1 class="font-serif text-3xl text-ink sm:text-4xl">
+  <div class="mx-auto w-full max-w-3xl px-5 py-12 sm:py-16 lg:max-w-6xl lg:px-8 lg:py-20">
+    <header class="mb-10 lg:mb-14">
+      <h1 class="font-serif text-3xl text-ink sm:text-4xl lg:text-5xl">
         {{ greeting }}
       </h1>
       <p
         v-if="streakNote"
-        class="mt-2 text-sm text-ink-faint"
+        class="mt-2 text-sm text-ink-faint lg:mt-3"
       >
         {{ streakNote }}
       </p>
@@ -58,7 +58,7 @@ const streakNote = computed(() => {
     <NuxtLink
       v-if="unfinished"
       :to="`/pray/${unfinished.id}`"
-      class="mb-10 flex items-center justify-between gap-4 rounded-lg border border-accent/40 bg-accent-soft px-5 py-4 transition-colors hover:border-accent"
+      class="mb-10 flex items-center justify-between gap-4 rounded-lg border border-accent/40 bg-accent-soft px-5 py-4 transition-colors hover:border-accent lg:mb-12 lg:max-w-md"
     >
       <span class="text-sm text-ink">
         Continue with

@@ -139,7 +139,7 @@ onUnmounted(() => prayer.close())
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
+  <div class="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14 lg:max-w-6xl lg:px-8">
     <p
       v-if="loading"
       class="py-20 text-center text-sm text-ink-faint"
@@ -194,9 +194,17 @@ onUnmounted(() => prayer.close())
       </div>
     </div>
 
-    <template v-else-if="prayer.session">
+    <!--
+      Desktop holds the passage beside the writing rather than above it, so
+      Scripture stays in view through all four movements — the practice asks you
+      to re-read it each time. Below lg it stacks, as before.
+    -->
+    <div
+      v-else-if="prayer.session"
+      class="lg:grid lg:grid-cols-2 lg:gap-12 xl:gap-16"
+    >
       <nav
-        class="mb-8 flex items-center gap-1.5"
+        class="mb-8 flex items-center gap-1.5 lg:col-start-2 lg:row-start-1 lg:mb-0"
         aria-label="Movements"
       >
         <button
@@ -212,15 +220,19 @@ onUnmounted(() => prayer.close())
         </button>
       </nav>
 
-      <PassageText
-        :reference="prayer.session.referenceDisplay"
-        :text="prayer.session.passageText"
-        :translation="translationName(prayer.session.translation)"
-      />
+      <!-- Spans both rows and stretches, giving the sticky figure room to travel. -->
+      <div class="lg:col-start-1 lg:row-span-2 lg:row-start-1">
+        <PassageText
+          sticky
+          :reference="prayer.session.referenceDisplay"
+          :text="prayer.session.passageText"
+          :translation="translationName(prayer.session.translation)"
+        />
+      </div>
 
       <section
         :key="step"
-        class="rise mt-10"
+        class="rise mt-10 lg:col-start-2 lg:row-start-2 lg:mt-6"
       >
         <div class="flex flex-wrap items-center justify-between gap-3">
           <h1 class="font-serif text-2xl text-ink">
@@ -276,7 +288,7 @@ onUnmounted(() => prayer.close())
             v-model="body"
             rows="9"
             :placeholder="definition.placeholder"
-            class="w-full resize-y rounded-md border border-rule bg-paper-raised px-4 py-3.5 scripture-sm text-ink placeholder:font-sans placeholder:text-base placeholder:text-ink-faint focus:border-accent focus:outline-none"
+            class="w-full resize-y rounded-md border border-rule bg-paper-raised px-4 py-3.5 scripture-sm text-ink placeholder:font-sans placeholder:text-base placeholder:text-ink-faint focus:border-accent focus:outline-none lg:min-h-[22rem]"
           />
           <p
             class="mt-2 h-4 text-xs"
@@ -318,6 +330,6 @@ onUnmounted(() => prayer.close())
           {{ formatClock(elapsed) }} in this movement. The timer never moves you on.
         </p>
       </section>
-    </template>
+    </div>
   </div>
 </template>

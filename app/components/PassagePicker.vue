@@ -55,9 +55,10 @@ async function begin() {
 </script>
 
 <template>
-  <div>
+  <div class="lg:grid lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-14 xl:gap-20">
+    <!-- align-self:start + sticky keeps the form in place while the suggestions scroll. -->
     <form
-      class="space-y-4"
+      class="space-y-4 lg:sticky lg:top-24 lg:self-start"
       @submit.prevent="begin"
     >
       <div>
@@ -140,12 +141,12 @@ async function begin() {
       </div>
     </form>
 
-    <div class="mt-14 border-t border-rule/60 pt-10">
+    <div class="mt-14 border-t border-rule/60 pt-10 lg:mt-0 lg:border-t-0 lg:pt-0">
       <h2 class="font-serif text-lg text-ink">
         If you don't know where to begin
       </h2>
 
-      <div class="mt-6 space-y-7">
+      <div class="mt-6 space-y-7 lg:mt-7 lg:space-y-8">
         <section
           v-for="group in CURATED_PASSAGES"
           :key="group.theme"

@@ -4,14 +4,20 @@ withDefaults(defineProps<{
   text: string
   translation?: string
   size?: 'normal' | 'small'
+  /** On wide screens, hold the passage in view and let it scroll within itself. */
+  sticky?: boolean
 }>(), {
   translation: undefined,
   size: 'normal',
+  sticky: false,
 })
 </script>
 
 <template>
-  <figure class="rounded-lg bg-paper-raised px-6 py-6 ring-1 ring-rule/60 sm:px-8 sm:py-7">
+  <figure
+    class="rounded-lg bg-paper-raised px-6 py-6 ring-1 ring-rule/60 sm:px-8 sm:py-7"
+    :class="sticky ? 'lg:sticky lg:top-24 lg:max-h-[calc(100dvh-9rem)] lg:overflow-y-auto' : ''"
+  >
     <blockquote
       class="text-ink"
       :class="size === 'small' ? 'scripture-sm' : 'scripture'"
