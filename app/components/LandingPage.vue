@@ -7,14 +7,6 @@ const sections = [
   { id: 'how', label: 'How to pray it' },
 ]
 
-/** The four rungs of Guigo's ladder, beside the English the app uses. */
-const latinNames: Record<string, string> = {
-  read: 'Lectio',
-  reflect: 'Meditatio',
-  respond: 'Oratio',
-  rest: 'Contemplatio',
-}
-
 const milestones = [
   {
     when: '3rd century',
@@ -133,7 +125,7 @@ const offerings = [
             {{ step.title }}
           </p>
           <p class="mt-0.5 font-serif text-sm italic text-ink-faint">
-            {{ latinNames[step.key] }}
+            {{ step.latin }}
           </p>
         </li>
       </ol>
@@ -285,7 +277,7 @@ const offerings = [
                 {{ step.title }}
               </h3>
               <span class="font-serif text-lg italic text-ink-faint">
-                {{ latinNames[step.key] }}
+                {{ step.latin }}
               </span>
             </div>
 

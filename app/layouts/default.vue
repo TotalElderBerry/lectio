@@ -1,20 +1,12 @@
 <script setup lang="ts">
-const { loggedIn, clear } = useUserSession()
-const settingsStore = useSettingsStore()
-const router = useRouter()
+const { loggedIn } = useUserSession()
+const signOut = useSignOut()
 
 const links = [
   { to: '/', label: 'Today' },
   { to: '/history', label: 'History' },
   { to: '/settings', label: 'Settings' },
 ]
-
-async function signOut() {
-  await $fetch('/api/auth/logout', { method: 'POST' })
-  await clear()
-  settingsStore.reset()
-  await router.push('/login')
-}
 </script>
 
 <template>
@@ -24,7 +16,7 @@ async function signOut() {
       v-if="loggedIn"
       class="sticky top-0 z-20 border-b border-rule/70 bg-paper/85 backdrop-blur-sm"
     >
-      <div class="mx-auto flex w-full max-w-6xl items-center gap-6 px-5 py-4 lg:px-8">
+      <div class="mx-auto flex w-full max-w-6xl items-center gap-5 px-5 py-3.5 sm:gap-6 sm:py-4 lg:px-8">
         <NuxtLink
           to="/"
           class="font-serif text-xl tracking-tight text-ink"
@@ -32,12 +24,13 @@ async function signOut() {
           Lectio
         </NuxtLink>
 
-        <nav class="flex items-center gap-5 text-sm lg:gap-7">
+        <!-- Right-aligned on a phone, where it is the only thing beside the name. -->
+        <nav class="ml-auto flex items-center gap-5 text-sm sm:ml-0 lg:gap-7">
           <NuxtLink
             v-for="link in links"
             :key="link.to"
             :to="link.to"
-            class="text-ink-soft transition-colors hover:text-ink"
+            class="whitespace-nowrap text-ink-soft transition-colors hover:text-ink"
             :active-class="link.to === '/' ? '' : 'text-ink'"
             exact-active-class="text-ink"
           >
@@ -45,9 +38,10 @@ async function signOut() {
           </NuxtLink>
         </nav>
 
+        <!-- A phone has no room for a fifth item; Settings carries it instead. -->
         <button
           type="button"
-          class="ml-auto text-sm text-ink-faint transition-colors hover:text-ink"
+          class="ml-auto hidden text-sm text-ink-faint transition-colors hover:text-ink sm:block"
           @click="signOut"
         >
           Sign out

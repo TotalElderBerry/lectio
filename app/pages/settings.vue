@@ -6,6 +6,7 @@ import type { Theme } from '~/stores/settings'
 const settingsStore = useSettingsStore()
 const { user, clear } = useUserSession()
 const router = useRouter()
+const signOut = useSignOut()
 const { ring } = useChime()
 
 useHead({ title: 'Settings' })
@@ -97,6 +98,13 @@ async function deleteAccount() {
     <p class="mt-2 text-sm text-ink-faint">
       Signed in as {{ user?.email }}
     </p>
+    <AppButton
+      variant="quiet"
+      class="mt-4"
+      @click="signOut"
+    >
+      Sign out
+    </AppButton>
 
     <div class="mt-12 space-y-12">
       <section>

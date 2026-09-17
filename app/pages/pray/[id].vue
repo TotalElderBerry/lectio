@@ -50,10 +50,28 @@ const saveLabel = computed(() => {
   }
 })
 
-/** Re-arm the clock whenever the movement changes. */
+/** The movement being announced by the veil, or null once the page is in view. */
+const introStep = ref<Step | null>(null)
+const introDefinition = computed(() => (introStep.value ? STEP_DEFINITIONS[introStep.value] : null))
+
+/**
+ * Re-arm the clock whenever the movement changes. It waits for the veil to
+ * lift: the seconds spent preparing are not seconds spent in the movement.
+ */
 function armClock() {
   const seconds = settings.value.timersEnabled ? (settings.value.stepSeconds[step.value] ?? 0) : 0
   reset(prayer.durations[step.value] ?? 0, seconds)
+  if (settings.value.timersEnabled && !introStep.value) start()
+}
+
+/** A breath between movements: the name and how to approach it, then the page. */
+function announce() {
+  introStep.value = step.value
+  armClock()
+}
+
+function onIntroDone() {
+  introStep.value = null
   if (settings.value.timersEnabled) start()
 }
 
@@ -111,7 +129,8 @@ onMounted(async () => {
   try {
     const session = await prayer.open(sessionId)
     finished.value = session.status === 'completed'
-    armClock()
+    if (finished.value) armClock()
+    else announce()
   }
   catch {
     loadError.value = 'That session could not be found.'
@@ -121,7 +140,7 @@ onMounted(async () => {
   }
 })
 
-watch(step, armClock)
+watch(step, announce)
 watch(() => settings.value.timersEnabled, armClock)
 
 // Banked seconds live in the store; they ride along with the next save.
@@ -201,7 +220,7 @@ onUnmounted(() => prayer.close())
     -->
     <div
       v-else-if="prayer.session"
-      class="lg:grid lg:grid-cols-2 lg:gap-12 xl:gap-16"
+      class="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16"
     >
       <nav
         class="mb-8 flex items-center gap-1.5 lg:col-start-2 lg:row-start-1 lg:mb-0"
@@ -220,23 +239,19 @@ onUnmounted(() => prayer.close())
         </button>
       </nav>
 
-      <!-- Spans both rows and stretches, giving the sticky figure room to travel. -->
-      <div class="lg:col-start-1 lg:row-span-2 lg:row-start-1">
-        <PassageText
-          sticky
-          :reference="prayer.session.referenceDisplay"
-          :text="prayer.session.passageText"
-          :translation="translationName(prayer.session.translation)"
-        />
-      </div>
-
-      <section
-        :key="step"
-        class="rise mt-10 lg:col-start-2 lg:row-start-2 lg:mt-6"
+      <!--
+        The movement and how to approach it come before the passage: on a phone
+        that is the order you act in, and it keeps what the veil just said in
+        view while you read.
+      -->
+      <header
+        :key="`head-${step}`"
+        class="rise mb-6 lg:col-start-2 lg:row-start-2 lg:mt-8 lg:mb-0"
       >
         <div class="flex flex-wrap items-center justify-between gap-3">
           <h1 class="font-serif text-2xl text-ink">
             {{ definition.title }}
+            <span class="ml-1.5 text-base italic text-ink-faint">{{ definition.latin }}</span>
           </h1>
 
           <StepTimer
@@ -252,7 +267,23 @@ onUnmounted(() => prayer.close())
         <p class="mt-3 text-sm text-ink-faint">
           {{ definition.instruction }}
         </p>
-        <p class="mt-4 scripture-sm text-ink-soft">
+      </header>
+
+      <!-- Spans every row and stretches, giving the sticky figure room to travel. -->
+      <div class="lg:col-start-1 lg:row-span-3 lg:row-start-1">
+        <PassageText
+          sticky
+          :reference="prayer.session.referenceDisplay"
+          :text="prayer.session.passageText"
+          :translation="translationName(prayer.session.translation)"
+        />
+      </div>
+
+      <section
+        :key="step"
+        class="rise mt-10 lg:col-start-2 lg:row-start-3 lg:mt-7"
+      >
+        <p class="scripture-sm text-ink-soft">
           {{ definition.prompt }}
         </p>
 
@@ -331,5 +362,10 @@ onUnmounted(() => prayer.close())
         </p>
       </section>
     </div>
+
+    <StepIntro
+      :step="introDefinition"
+      @done="onIntroDone"
+    />
   </div>
 </template>
