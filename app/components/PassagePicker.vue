@@ -11,10 +11,44 @@ const manualText = ref('')
 const showManual = ref(false)
 const error = ref('')
 const starting = ref(false)
+const translationMenuOpen = ref(false)
 const referenceField = useTemplateRef<HTMLInputElement>('referenceField')
+const translationMenu = useTemplateRef<HTMLDivElement>('translationMenu')
+const translationTrigger = useTemplateRef<HTMLButtonElement>('translationTrigger')
 
 watch(() => settingsStore.settings.defaultTranslation, (value) => {
   translation.value = value
+})
+
+const selectedTranslation = computed(() => TRANSLATIONS.find(option => option.id === translation.value) ?? TRANSLATIONS[0])
+
+function selectTranslation(id: string) {
+  translation.value = id
+  translationMenuOpen.value = false
+  translationTrigger.value?.focus()
+}
+
+function closeTranslationMenu(event: MouseEvent) {
+  if (translationMenu.value && !translationMenu.value.contains(event.target as Node)) {
+    translationMenuOpen.value = false
+  }
+}
+
+function closeTranslationMenuOnEscape(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    translationMenuOpen.value = false
+    translationTrigger.value?.focus()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', closeTranslationMenu)
+  document.addEventListener('keydown', closeTranslationMenuOnEscape)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', closeTranslationMenu)
+  document.removeEventListener('keydown', closeTranslationMenuOnEscape)
 })
 
 function choose(passage: string) {
@@ -78,19 +112,68 @@ async function begin() {
             autocomplete="off"
             class="flex-1 rounded-md border border-rule bg-paper-raised px-4 py-3 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none"
           >
-          <select
-            v-model="translation"
-            aria-label="Translation"
-            class="rounded-md border border-rule bg-paper-raised px-3 py-3 text-sm text-ink-soft focus:border-accent focus:outline-none"
+          <div
+            ref="translationMenu"
+            class="relative w-full sm:w-48"
           >
-            <option
-              v-for="option in TRANSLATIONS"
-              :key="option.id"
-              :value="option.id"
+            <button
+              ref="translationTrigger"
+              type="button"
+              aria-label="Translation"
+              aria-haspopup="listbox"
+              :aria-expanded="translationMenuOpen"
+              class="flex w-full items-center justify-between gap-3 rounded-md border border-rule bg-paper-raised px-3.5 py-3 text-left text-sm text-ink-soft transition-[border-color,box-shadow] hover:border-ink-faint focus:border-accent focus:outline-none"
+              :class="translationMenuOpen ? 'border-accent shadow-[0_0_0_3px_var(--accent-soft)]' : ''"
+              @click.stop="translationMenuOpen = !translationMenuOpen"
             >
-              {{ option.name }}
-            </option>
-          </select>
+              <span class="truncate">{{ selectedTranslation.name }}</span>
+              <svg
+                aria-hidden="true"
+                class="h-4 w-4 shrink-0 text-ink-faint transition-transform"
+                :class="translationMenuOpen ? 'rotate-180' : ''"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path d="m5 7.5 5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+
+            <div
+              v-if="translationMenuOpen"
+              class="rise absolute left-0 top-[calc(100%+0.5rem)] z-30 w-full min-w-64 overflow-hidden rounded-lg border border-rule bg-paper-raised py-1.5 shadow-[0_12px_30px_rgb(44_39_36/0.12)]"
+              role="listbox"
+              aria-label="Bible translation"
+            >
+              <button
+                v-for="option in TRANSLATIONS"
+                :key="option.id"
+                type="button"
+                role="option"
+                :aria-selected="translation === option.id"
+                class="flex w-full items-center gap-3 px-3.5 py-2 text-left transition-colors hover:bg-accent-soft"
+                :class="translation === option.id ? 'text-ink' : 'text-ink-soft'"
+                @click="selectTranslation(option.id)"
+              >
+                <span class="flex min-w-0 flex-1 flex-col">
+                  <span class="truncate text-sm">{{ option.name }}</span>
+                  <span class="text-xs text-ink-faint">{{ option.note }}</span>
+                </span>
+                <svg
+                  v-if="translation === option.id"
+                  aria-hidden="true"
+                  class="h-4 w-4 shrink-0 text-accent"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                >
+                  <path d="m4 10.5 3.5 3.5L16 6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

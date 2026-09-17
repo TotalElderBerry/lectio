@@ -13,6 +13,41 @@ useHead({ title: 'Settings' })
 onMounted(() => settingsStore.load())
 
 const settings = computed(() => settingsStore.settings)
+const translationMenuOpen = ref(false)
+const translationMenu = useTemplateRef<HTMLDivElement>('translationMenu')
+const translationTrigger = useTemplateRef<HTMLButtonElement>('translationTrigger')
+
+const selectedTranslation = computed(() => TRANSLATIONS.find(option => option.id === settings.value.defaultTranslation) ?? TRANSLATIONS[0])
+
+function selectTranslation(id: string) {
+  translationMenuOpen.value = false
+  void settingsStore.update({ defaultTranslation: id })
+  translationTrigger.value?.focus()
+}
+
+function closeTranslationMenu(event: MouseEvent) {
+  if (translationMenu.value && !translationMenu.value.contains(event.target as Node)) {
+    translationMenuOpen.value = false
+  }
+}
+
+function closeTranslationMenuOnEscape(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    translationMenuOpen.value = false
+    translationTrigger.value?.focus()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', closeTranslationMenu)
+  document.addEventListener('keydown', closeTranslationMenuOnEscape)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', closeTranslationMenu)
+  document.removeEventListener('keydown', closeTranslationMenuOnEscape)
+})
+
 const themes: { value: Theme; label: string }[] = [
   { value: 'system', label: 'System' },
   { value: 'light', label: 'Light' },
@@ -74,20 +109,69 @@ async function deleteAccount() {
         >
           Preferred translation
         </label>
-        <select
-          id="translation"
-          :value="settings.defaultTranslation"
-          class="w-full rounded-md border border-rule bg-paper-raised px-4 py-3 text-ink focus:border-accent focus:outline-none sm:w-auto"
-          @change="settingsStore.update({ defaultTranslation: ($event.target as HTMLSelectElement).value })"
+        <div
+          ref="translationMenu"
+          class="relative w-full sm:w-96"
         >
-          <option
-            v-for="option in TRANSLATIONS"
-            :key="option.id"
-            :value="option.id"
+          <button
+            ref="translationTrigger"
+            id="translation"
+            type="button"
+            aria-label="Preferred translation"
+            aria-haspopup="listbox"
+            :aria-expanded="translationMenuOpen"
+            class="flex w-full items-center justify-between gap-3 rounded-md border border-rule bg-paper-raised px-4 py-3 text-left text-ink transition-[border-color,box-shadow] hover:border-ink-faint focus:border-accent focus:outline-none"
+            :class="translationMenuOpen ? 'border-accent shadow-[0_0_0_3px_var(--accent-soft)]' : ''"
+            @click.stop="translationMenuOpen = !translationMenuOpen"
           >
-            {{ option.name }} — {{ option.note }}
-          </option>
-        </select>
+            <span class="min-w-0 truncate">{{ selectedTranslation.name }} — {{ selectedTranslation.note }}</span>
+            <svg
+              aria-hidden="true"
+              class="h-4 w-4 shrink-0 text-ink-faint transition-transform"
+              :class="translationMenuOpen ? 'rotate-180' : ''"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path d="m5 7.5 5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+
+          <div
+            v-if="translationMenuOpen"
+            class="rise absolute left-0 top-[calc(100%+0.5rem)] z-30 w-full overflow-hidden rounded-lg border border-rule bg-paper-raised py-1.5 shadow-[0_12px_30px_rgb(44_39_36/0.12)]"
+            role="listbox"
+            aria-label="Preferred Bible translation"
+          >
+            <button
+              v-for="option in TRANSLATIONS"
+              :key="option.id"
+              type="button"
+              role="option"
+              :aria-selected="settings.defaultTranslation === option.id"
+              class="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-accent-soft"
+              :class="settings.defaultTranslation === option.id ? 'text-ink' : 'text-ink-soft'"
+              @click="selectTranslation(option.id)"
+            >
+              <span class="flex min-w-0 flex-1 flex-col">
+                <span class="truncate text-sm">{{ option.name }}</span>
+                <span class="text-xs text-ink-faint">{{ option.note }}</span>
+              </span>
+              <svg
+                v-if="settings.defaultTranslation === option.id"
+                aria-hidden="true"
+                class="h-4 w-4 shrink-0 text-accent"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+              >
+                <path d="m4 10.5 3.5 3.5L16 6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
         <p class="mt-2 text-xs text-ink-faint">
           All public domain. Modern Catholic translations are copyrighted and cannot be served here — paste
           those in from your own missal when you want them.
