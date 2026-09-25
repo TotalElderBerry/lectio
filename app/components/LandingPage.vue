@@ -89,7 +89,7 @@ const offerings = [
     </header>
 
     <!-- Hero -->
-    <section class="mx-auto w-full max-w-5xl px-5 pt-16 pb-14 sm:pt-24 sm:pb-20 lg:px-8">
+    <section class="mx-auto flex max-w-5xl flex-col items-center px-5 pt-16 pb-14 text-center sm:pt-24 sm:pb-20 lg:px-8">
       <p class="text-sm uppercase tracking-[0.18em] text-ink-faint">
         Lectio Divina
       </p>
@@ -102,7 +102,7 @@ const offerings = [
         way.
       </p>
 
-      <div class="mt-9 flex flex-wrap items-center gap-5">
+      <div class="mt-9 flex w-full flex-wrap items-center justify-center gap-5">
         <NuxtLink to="/register">
           <AppButton>Begin praying</AppButton>
         </NuxtLink>
@@ -114,7 +114,7 @@ const offerings = [
         </a>
       </div>
 
-      <ol class="mt-14 grid gap-px overflow-hidden rounded-lg border border-rule bg-rule sm:grid-cols-4">
+      <ol class="mt-14 grid w-full max-w-xl gap-px overflow-hidden rounded-lg border border-rule bg-rule sm:grid-cols-4">
         <li
           v-for="(step, index) in STEP_LIST"
           :key="step.key"
